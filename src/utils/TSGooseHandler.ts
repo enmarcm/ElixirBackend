@@ -161,6 +161,11 @@ class TSGooseHandler implements TSGooseHandlerProps {
    */
   async searchOne<T>({ Model, condition, transform }: SearchOneParams<T>) {
     try {
+      const allConditionsMet = Object.values(condition).every((value) =>
+        Boolean(value)
+      );
+      if (!allConditionsMet) return false;
+
       const document = await Model.findOne(condition, transform);
 
       return document ? document : false;
@@ -213,7 +218,12 @@ class TSGooseHandler implements TSGooseHandlerProps {
         skip: offset,
         limit: limit,
       });
-      return documents;
+
+      const JSONDocuments = JSON.parse(JSON.stringify(documents));
+
+      console.log(JSONDocuments);
+
+      return JSONDocuments;
     } catch (error) {
       console.error(error);
       throw new Error(

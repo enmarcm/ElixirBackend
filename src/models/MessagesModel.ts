@@ -1,4 +1,9 @@
-import { ChatModel, ChatMessageModel, MessageModel } from "../typegoose/models";
+import {
+  ChatModel,
+  ChatMessageModel,
+  MessageModel,
+  UserModel,
+} from "../typegoose/models";
 import { ITSGooseHandler } from "../data/instances";
 
 export default class MessagesModelClass {
@@ -131,11 +136,8 @@ export default class MessagesModelClass {
         offset: (page - 1) * LIMIT_PAGE_CHAT,
       })) as any;
 
-      const chatsJson = chats.toJSON();
-
-      //Ahora necesito obtener el ultimo mensaje de cada chat, para esto, hay que buscar en chatMessage, y buscar los mensajes que tengan el idChat y el idMessage, limitando la busqueda a uno solo, pero teiene que ser el utlimo, entonces luego, agregaremos el mensaje al chat
       const chatsWithLastMessage = await Promise.all(
-        chatsJson.map(async (chat: any) => {
+        chats.map(async (chat: any) => {
           const lastMessage = await ITSGooseHandler.searchOne({
             Model: ChatMessageModel,
             condition: { idChat: chat.id },
@@ -149,24 +151,19 @@ export default class MessagesModelClass {
         })
       );
 
-      //Ahora necesito obtener tambien el nombre del usuario con el que se esta chateando y su imagen
-
       const chatsWithLastMessageAndUser = await Promise.all(
         chatsWithLastMessage.map(async (chat: any) => {
-          const userChat = await ITSGooseHandler.searchOne({
-            Model: ChatModel,
-            condition: { idUserReceiver: chat.idUserSender },
+
+          const userLastMessage = await ITSGooseHandler.searchOne({
+            Model: UserModel,
+            condition: { id: chat.lastMessage.idUser },
           });
 
           return {
             ...chat,
-            userChat,
+            userLastMessage,
           };
         })
-      );
-
-      console.log(
-        `Los chats del usuario ${idUser} son: ${chatsWithLastMessageAndUser}`
       );
 
       return chatsWithLastMessageAndUser;

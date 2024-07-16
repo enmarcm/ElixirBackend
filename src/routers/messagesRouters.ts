@@ -9,7 +9,7 @@ messagesRouter.get(
   async (req: Request, res: Response) => {
     try {
       const { idUser } = req as any;
-      const page = parseInt(req.params.page);
+      const page = parseInt(req.params.page) || 1;
 
       const result = await MessagesModelClass.gettAllChatsByUser({
         idUser,
