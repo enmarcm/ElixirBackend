@@ -174,7 +174,7 @@ class AuthController {
 
       if (!result) return false;
 
-      return result._id;
+      return result._id || result.id;
     } catch (error) {
       return { error };
     }

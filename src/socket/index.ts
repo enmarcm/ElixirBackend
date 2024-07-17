@@ -60,7 +60,7 @@ export const configureSocket = (io: Server) => {
       }
     });
 
-    socket.on("privateMessage", ({ sender, receiver, message }) => {
+    socket.on("privateMessage", ({ sender, receiver, message, type="text" }) => {
 
       
       console.log(`Los datos son: ${sender}, ${receiver}, ${message}`)
@@ -71,11 +71,14 @@ export const configureSocket = (io: Server) => {
         //Quiero enviar tambien los datos del usuario que envia el mensaje, como userName e imagen, que estan guardados en el mapa, sacarlos de ahi
         const dataSend = {
           sender,
-          message,
+          message: {
+            type,
+            content: message,
+          },
+          date: new Date().toISOString(),
           senderData: {
             userName: socket.data.userName,
             email: socket.data.email,
-            role: socket.data.role,
           },
         }
 

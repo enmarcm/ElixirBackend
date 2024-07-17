@@ -165,10 +165,13 @@ class TSGooseHandler implements TSGooseHandlerProps {
         Boolean(value)
       );
       if (!allConditionsMet) return false;
-
-      const document = await Model.findOne(condition, transform);
-
-      return document ? document : false;
+  
+      // Ordena por el campo '_id' en orden descendente para obtener el documento más reciente.
+      const document = await Model.findOne(condition, transform).sort({ _id: -1 });
+  
+      const parsedDocument = JSON.parse(JSON.stringify(document));
+  
+      return document ? parsedDocument : false;
     } catch (error) {
       console.error(error);
       return {
@@ -176,7 +179,6 @@ class TSGooseHandler implements TSGooseHandlerProps {
       };
     }
   }
-
   /**
    * Search for a document in a model by its ID
    */

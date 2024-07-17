@@ -1,6 +1,6 @@
 //TODO: AGREGAR VALIDACIONES QUE YA SE CREAERON
 //TODO: AL USUARIO LE FALTA EL ROL
-import { modelOptions, prop, Ref } from "@typegoose/typegoose";
+import { index, modelOptions, prop, Ref } from "@typegoose/typegoose";
 import { UserValidations } from "./schemasValidations";
 import { MessageInterface } from "../types";
 
@@ -40,6 +40,8 @@ export class User {
     required: false,
     type: String,
     validate: UserValidations.imageValidate(),
+    default:
+      "https://st2.depositphotos.com/47577860/46269/v/450/depositphotos_462698004-stock-illustration-account-avatar-interface-icon-flat.jpg",
   })
   public image!: string;
 
@@ -212,7 +214,7 @@ export class Message {
   @prop({ required: true, type: String, ref: () => User })
   public idUserReceiver!: Ref<User>;
 
-  @prop({ required: true, type: String })
+  @prop({ required: true, type: Object })
   public content!: MessageInterface;
 
   @prop({ required: true, type: Date })
@@ -233,6 +235,7 @@ export class Message {
     },
   },
 })
+@index({ idUser: 1, idUserReceiver: 1 }, { unique: true })
 export class Chat {
   @prop({ required: true, type: String, ref: () => User })
   public idUser!: Ref<User>;

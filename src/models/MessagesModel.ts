@@ -3,20 +3,20 @@ import {
   ChatMessageModel,
   MessageModel,
   UserModel,
+  // UserModel,
 } from "../typegoose/models";
 import { ITSGooseHandler } from "../data/instances";
+import { MessageInterface } from "../types";
 
 export default class MessagesModelClass {
   static addMessage = async ({
     idSender,
     idReceiver,
     content,
-    idChatSender,
   }: {
     idSender: string;
     idReceiver: string;
-    content: any;
-    idChatSender: string;
+    content: MessageInterface;
   }) => {
     try {
       //Primero vamos a agregar a la coleccion de mensajes
@@ -35,15 +35,13 @@ export default class MessagesModelClass {
 
       //Luego vamos a buscar en chats donde idUser = idSender y idUserSender = idReceiver o viceversa
       const CONDITION_CHAT_RECEIVER = {
-        $or: [{ idUser: idReceiver, idUserSender: idSender }],
+        $or: [{ idUser: idReceiver, idUserReceiver: idSender }],
       };
 
       const chatReceiverData = await ITSGooseHandler.searchOne({
         Model: ChatModel,
         condition: CONDITION_CHAT_RECEIVER,
       });
-
-      console.log(chatReceiverData);
 
       //Si no existe el chat en el receptor lo creamos
       const dataNullChatReceiver =
@@ -54,34 +52,46 @@ export default class MessagesModelClass {
             Model: ChatModel,
             data: {
               idUser: idReceiver,
-              idUserSender: idSender,
-              lastMessage: resultMessageDB,
+              idUserReceiver: idSender,
             },
           })
         : chatReceiverData;
 
-      console.log("Este fue el documento generado: ", resultCreateChatReceiver);
+      //Vamos a encontrar el chat del que envia
+      const CONDITION_CHAT_SENDER = {
+        $or: [{ idUser: idSender, idUserReceiver: idReceiver }],
+      };
+
+      //Este siempre va a existir, el es el que envia el mensaje
+      const chatSenderData = await ITSGooseHandler.searchOne({
+        Model: ChatModel,
+        condition: CONDITION_CHAT_SENDER,
+      });
 
       //Al encontrar los chats de cada uno vamos a agregar el mensaje a cada chat
-      const addMessageToChatSender = await ITSGooseHandler.addDocument({
+      //Este es para el que envia
+      const resultSend = await ITSGooseHandler.addDocument({
         Model: ChatMessageModel,
         data: {
-          idChat: idChatSender,
+          idChat: chatSenderData.id,
           idMessage: resultMessageDB.id,
           idUser: idSender,
         },
       });
 
-      const addMessageToChatReceiver = await ITSGooseHandler.addDocument({
+      const resultReceiver = await ITSGooseHandler.addDocument({
         Model: ChatMessageModel,
         data: {
           idChat: resultCreateChatReceiver.id,
           idMessage: resultMessageDB.id,
-          idUser: idSender,
+          idUser: idReceiver,
         },
       });
 
-      console.log(addMessageToChatSender, addMessageToChatReceiver);
+      return {
+        resultSend,
+        resultReceiver,
+      };
     } catch (error) {
       console.error(`Hubo un error al agregar el mensaje: ${error}`);
       throw new Error(`Error adding message: ${error}`);
@@ -98,7 +108,7 @@ export default class MessagesModelClass {
     try {
       const LIMIT_PAGE_MESSAGE = 50;
 
-      // Step 1: Verify that the chat really exists
+      // Verificar que el chat realmente existe
       const chat = await ChatModel.findById(idChat);
       if (!chat) {
         throw new Error(`Chat with id ${idChat} does not exist`);
@@ -111,8 +121,38 @@ export default class MessagesModelClass {
         offset: (page - 1) * LIMIT_PAGE_MESSAGE,
       });
 
-      console.log(`Los mensajes del chat ${idChat} son: ${messages}`);
-      return messages;
+      const formattedMessages = await Promise.all(
+        messages.map(async (message: any) => {
+          const content = await ITSGooseHandler.searchOne({
+            Model: MessageModel,
+            condition: { _id: message.idMessage },
+            transform: { content: 1, date: 1, read: 1, id: 1, idUserSender: 1 },
+          });
+
+          const userSender = await ITSGooseHandler.searchOne({
+            Model: UserModel,
+            condition: { _id: content.idUserSender },
+            transform: { userName: 1, id: 1, image: 1, email: 1 },
+          });
+
+          return {
+            sender: content.idUserSender,
+            message: {
+              type: content.content.type,
+              content: content.content.message,
+            },
+            date: content.date,
+            senderData: {
+              userName: userSender.userName,
+              email: userSender.email,
+            },
+            type: message.type,
+          };
+        })
+      );
+
+      console.log(`Los mensajes del chat ${idChat} son: ${formattedMessages}`);
+      return formattedMessages;
     } catch (error) {
       console.error(`Hubo un error al obtener los mensajes: ${error}`);
       throw new Error(`Error getting messages: ${error}`);
@@ -141,27 +181,40 @@ export default class MessagesModelClass {
           const lastMessage = await ITSGooseHandler.searchOne({
             Model: ChatMessageModel,
             condition: { idChat: chat.id },
-            transform: { idMessage: -1 },
+            transform: { idMessage: 1 },
+          });
+
+          const lastMessageContent = await ITSGooseHandler.searchOne({
+            Model: MessageModel,
+            condition: { _id: lastMessage.idMessage },
+            transform: { content: 1, date: 1, read: 1, id: 1, idUserSender: 1 },
           });
 
           return {
             ...chat,
-            lastMessage,
+            lastMessageContent,
           };
         })
       );
 
       const chatsWithLastMessageAndUser = await Promise.all(
         chatsWithLastMessage.map(async (chat: any) => {
-
           const userLastMessage = await ITSGooseHandler.searchOne({
             Model: UserModel,
-            condition: { id: chat.lastMessage.idUser },
+            condition: { _id: chat.lastMessageContent.idUserSender },
+            transform: { userName: 1, id: 1, image: 1 },
+          });
+
+          const userReceiver = await ITSGooseHandler.searchOne({
+            Model: UserModel,
+            condition: { _id: chat.idUserReceiver },
+            transform: { userName: 1, id: 1, image: 1 },
           });
 
           return {
             ...chat,
             userLastMessage,
+            userReceiver,
           };
         })
       );
