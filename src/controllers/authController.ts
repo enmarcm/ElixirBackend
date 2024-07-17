@@ -418,6 +418,36 @@ class AuthController {
       });
     }
   }
+
+  public static async getUserInfoById(req: Request, res: Response) {
+    try {
+      const { idUser } = req.params;
+
+      // Fetch user information based on idUser
+      const userInfo = await UserModelClass.getUserInfo({ idUser });
+
+      // Check if userInfo exists
+      if (!userInfo) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const mappedUserInfo = {
+        userName: userInfo.userName,
+        email: userInfo.email,
+        image: userInfo.image,
+        role: userInfo.role,
+        dateOfBirth: userInfo.dateOfBirth,
+        id: userInfo.id,
+      };
+
+      return res.status(200).json(mappedUserInfo);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: "An error occurred while fetching the user information.",
+      });
+    }
+  }
 }
 
 export default AuthController;

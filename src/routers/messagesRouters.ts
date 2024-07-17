@@ -28,12 +28,14 @@ messagesRouter.get(
   "/getMessages/:idChat/:page",
   async (req: Request, res: Response) => {
     try {
+      const { idUser } = req as any;
       const { idChat, page } = req.params;
       const parsedPage = parseInt(page) || 1;
 
       const result = await MessagesModelClass.getMessageByChat({
         idChat,
         page: parsedPage,
+        idUser,
       });
 
       return res.json(result);

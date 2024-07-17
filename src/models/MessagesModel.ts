@@ -101,9 +101,11 @@ export default class MessagesModelClass {
   static getMessageByChat = async ({
     idChat,
     page = 1,
+    idUser
   }: {
     idChat: string;
     page?: number;
+    idUser: string;
   }) => {
     try {
       const LIMIT_PAGE_MESSAGE = 50;
@@ -136,6 +138,7 @@ export default class MessagesModelClass {
           });
 
           return {
+            id: content.id,
             sender: content.idUserSender,
             message: {
               type: content.content.type,
@@ -151,8 +154,17 @@ export default class MessagesModelClass {
         })
       );
 
-      console.log(`Los mensajes del chat ${idChat} son: ${formattedMessages}`);
-      return formattedMessages;
+      //Ahora voy a verificar si yo soy el mismo que lo envie, para agregar una prop de isSendByMe
+      const formattedMessagesWithIsSendByMe = formattedMessages.map(
+        (message: any) => {
+          return {
+            ...message,
+            isSendByMe: message.sender === idUser,
+          };
+        }
+      );
+
+      return formattedMessagesWithIsSendByMe;
     } catch (error) {
       console.error(`Hubo un error al obtener los mensajes: ${error}`);
       throw new Error(`Error getting messages: ${error}`);
