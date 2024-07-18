@@ -101,14 +101,17 @@ export default class MessagesModelClass {
   static getMessageByChat = async ({
     idChat,
     page = 1,
-    idUser
+    idUser,
   }: {
     idChat: string;
     page?: number;
     idUser: string;
   }) => {
     try {
-      const LIMIT_PAGE_MESSAGE = 50;
+      const LIMIT_PAGE_MESSAGE = 40;
+
+      //Ok ahora necesito hacer una logica, para que me traiga los mensajes pero los ultimos registros, y a medida que vaya aumentando la pagina me traiga los anteriores
+      
 
       // Verificar que el chat realmente existe
       const chat = await ChatModel.findById(idChat);
@@ -121,10 +124,13 @@ export default class MessagesModelClass {
         condition: { idChat },
         limit: LIMIT_PAGE_MESSAGE,
         offset: (page - 1) * LIMIT_PAGE_MESSAGE,
+        sort: { _id: -1 },
       });
 
+      const messageReversed = messages.reverse();
+
       const formattedMessages = await Promise.all(
-        messages.map(async (message: any) => {
+        messageReversed.map(async (message: any) => {
           const content = await ITSGooseHandler.searchOne({
             Model: MessageModel,
             condition: { _id: message.idMessage },
@@ -202,9 +208,20 @@ export default class MessagesModelClass {
             transform: { content: 1, date: 1, read: 1, id: 1, idUserSender: 1 },
           });
 
+          const lastMessageContentParsed = {
+            id: lastMessageContent.id,
+            idUserSender: lastMessageContent.idUserSender,
+            sender: lastMessageContent.idUserSender,
+            message: {
+              type: lastMessageContent.content.type,
+              content: lastMessageContent.content.message,
+            },
+            date: lastMessageContent.date,
+          };
+
           return {
             ...chat,
-            lastMessageContent,
+            lastMessageContent: lastMessageContentParsed,
           };
         })
       );

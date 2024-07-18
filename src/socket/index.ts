@@ -60,21 +60,20 @@ export const configureSocket = (io: Server) => {
       }
     });
 
-    socket.on("privateMessage", ({ sender, receiver, message, type="text" }) => {
+    socket.on("privateMessage", ({ sender, receiver, message }) => {
 
       
-      console.log(`Los datos son: ${sender}, ${receiver}, ${message}`)
+      // console.log(`Los datos son: ${sender}, ${receiver}, ${message}`)
 
       const receiverSocketId = userSocketMap[receiver];
       if (receiverSocketId) {
 
-        //Quiero enviar tambien los datos del usuario que envia el mensaje, como userName e imagen, que estan guardados en el mapa, sacarlos de ahi
+        console.log(`Ell mesane es`)
+        console.log(message)
+
         const dataSend = {
           sender,
-          message: {
-            type,
-            content: message,
-          },
+          message,
           date: new Date().toISOString(),
           senderData: {
             userName: socket.data.userName,

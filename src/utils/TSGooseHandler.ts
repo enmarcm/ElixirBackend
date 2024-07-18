@@ -209,16 +209,19 @@ class TSGooseHandler implements TSGooseHandlerProps {
     limit = 10,
     offset = 0,
     condition = {},
+    sort = {},
   }: SearchAll<T> & {
     limit?: number;
     offset?: number;
     condition?: any;
     transform?: any;
+    sort?: any;
   }): Promise<Array<T>> {
     try {
       const documents = await Model.find(condition, transform, {
         skip: offset,
         limit: limit,
+        sort: sort, // Added sort property
       });
 
       const JSONDocuments = JSON.parse(JSON.stringify(documents));
