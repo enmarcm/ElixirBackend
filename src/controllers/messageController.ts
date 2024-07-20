@@ -23,23 +23,23 @@ class MessageController {
     try {
       const { idUser } = req as any;
       const { idReceiver, content } = req.body;
-  
+
       //Debemos validar que content, tenga esta estructura
       // {type: "text", content: "Hola", "message": string}
-  
+
       const result = await MessagesModelClass.addMessage({
         idSender: idUser,
         idReceiver,
         content,
       });
-  
+
       console.log(result);
       return res.json(result);
     } catch (error) {
       console.log(error);
       throw new Error(`Error adding message: ${error}`);
     }
-  }
+  };
 
   static getMessageChat = async (req: Request, res: Response) => {
     try {
@@ -54,6 +54,40 @@ class MessageController {
       });
 
       return res.json(result);
+    } catch (error) {
+      console.error(`Hubo un error al obtener los mensajes: ${error}`);
+      throw new Error(`Error getting messages: ${error}`);
+    }
+  };
+
+  static addChat = async (req: Request, res: Response) => {
+    try {
+      const { idUser } = req as any;
+      const { idUserReceiver } = req.body;
+
+      const result = await MessagesModelClass.addChat({
+        idUserSender: idUser,
+        idUserReceiver,
+      });
+
+      return res.json(result);
+    } catch (error) {
+      console.error(`Hubo un error al obtener los mensajes: ${error}`);
+      throw new Error(`Error getting messages: ${error}`);
+    }
+  };
+
+  static verifyChatUser = async (req: Request, res: Response) => {
+    try {
+      const {idUser}  = req as any
+      const {idUserReceiver} = req.body
+
+      const result = await MessagesModelClass.verifyChatUser({
+        idUser,
+        idUserReceiver
+      })
+
+      return res.json(result)
     } catch (error) {
       console.error(`Hubo un error al obtener los mensajes: ${error}`);
       throw new Error(`Error getting messages: ${error}`);

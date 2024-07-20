@@ -10,6 +10,12 @@ messagesRouter.get(
   MessageController.getMessageChat
 );
 
+
+messagesRouter.get("/verifyChatUser/:idUser", MessageController.verifyChatUser)
+
 messagesRouter.post("/addMessage", MessageController.addMessages);
+
+messagesRouter.post("/addChat", MessageController.addChat);
+
 
 export default messagesRouter;

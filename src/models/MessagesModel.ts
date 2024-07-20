@@ -111,7 +111,6 @@ export default class MessagesModelClass {
       const LIMIT_PAGE_MESSAGE = 40;
 
       //Ok ahora necesito hacer una logica, para que me traiga los mensajes pero los ultimos registros, y a medida que vaya aumentando la pagina me traiga los anteriores
-      
 
       // Verificar que el chat realmente existe
       const chat = await ChatModel.findById(idChat);
@@ -252,6 +251,59 @@ export default class MessagesModelClass {
     } catch (error) {
       console.error(`Hubo un error al obtener los chats: ${error}`);
       throw new Error(`Error getting chats: ${error}`);
+    }
+  };
+
+  static addChat = async ({
+    idUserSender,
+    idUserReceiver,
+  }: {
+    idUserSender: string;
+    idUserReceiver: string;
+  }) => {
+    try {
+      const addChatToSender = await ITSGooseHandler.addDocument({
+        Model: ChatModel,
+        data: {
+          idUser: idUserSender,
+          idUserReceiver,
+        },
+      });
+
+      const addChatToReceiver = await ITSGooseHandler.addDocument({
+        Model: ChatModel,
+        data: {
+          idUser: idUserReceiver,
+          idUserReceiver: idUserSender,
+        },
+      });
+
+      return { addChatToReceiver, addChatToSender };
+    } catch (error) {
+      console.error(`Hubo un error al agregar el chat: ${error}`);
+      throw new Error(`Error adding chat: ${error}`);
+    }
+  };
+
+  static verifyChatUser = async ({
+    idUser,
+    idUserReceiver,
+  }: {
+    idUser: string;
+    idUserReceiver: string;
+  }) => {
+    try {
+      const result = await ITSGooseHandler.searchOne({
+        Model: ChatModel,
+        condition: { idUser, idUserReceiver },
+      });
+
+      console.log(result);
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw new Error(`Error verifying chat: ${error}`);
     }
   };
 }
