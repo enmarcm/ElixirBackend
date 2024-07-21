@@ -262,6 +262,21 @@ class UserModelClass {
       return { error };
     }
   }
+
+  static async verifyUserExist({ userOrEmail }: { userOrEmail: string }) {
+    try {
+      const user = await ITSGooseHandler.searchOne({
+        Model: UserModel,
+        condition: { $or: [{ userName: userOrEmail }, { email: userOrEmail }] },
+        transform: { password: 0, dateOfBirth: 0, attempts: 0, active: 0 , blocked: 0, idArtist: 0, },
+      });
+
+      return user;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error verifying user exist. Error ${error}`);
+    }
+  }
 }
 
 export default UserModelClass;

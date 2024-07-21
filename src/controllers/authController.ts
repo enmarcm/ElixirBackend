@@ -448,6 +448,25 @@ class AuthController {
       });
     }
   }
+
+  static async verifyUserExist(req: Request, res: Response) {
+    try {
+      const { userOrEmail } = req.params;
+
+      const user = await UserModelClass.verifyUserExist({ userOrEmail });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error(
+        `Hubo un error al verificar si el usuario existe: ${error}`
+      );
+      return res.status(500).json({ error: "Error verifying if user exists" });
+    }
+  }
 }
 
 export default AuthController;
