@@ -27,6 +27,7 @@ app.use(enums_1.Routes.AUTH, allRouters_1.default.authRouter);
 app.use(enums_1.Routes.PROFILE, middlewares_1.midToken, allRouters_1.default.profileRouter);
 app.use(enums_1.Routes.MESSAGES, middlewares_1.midToken, allRouters_1.default.messagesRouter);
 app.use(enums_1.Routes.CONTACTS, middlewares_1.midToken, allRouters_1.default.contactRouter);
+app.use(enums_1.Routes.STATUS, middlewares_1.midToken, allRouters_1.default.statusRouter);
 app.use(middlewares_1.midErrorHandler);
 app.use(middlewares_1.midNotFound);
 (0, socket_1.configureSocket)(io);

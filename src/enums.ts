@@ -5,7 +5,8 @@ export enum Routes {
   AUTH = "/auth",
   PROFILE = "/profile",
   MESSAGES = "/messages",
-  CONTACTS = "/contacts"
+  CONTACTS = "/contacts",
+  STATUS = "/status",
 }
 
 export const URLS = {
