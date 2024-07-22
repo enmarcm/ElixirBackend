@@ -54,6 +54,14 @@ export default class ContactModelClass {
     nameContact: string;
   }) => {
     try {
+      if (idUser === idUserContact) {
+        return {
+          error: {
+            message: "No puedes agregarte a ti mismo como contacto",
+          },
+        };
+      }
+
       //Verifica que si ya existe un contacto nuestro con esa id en la base de datos no lo agreguie
       const resultExist = await ITSGooseHandler.searchOne({
         Model: ContactModel,
@@ -63,7 +71,7 @@ export default class ContactModelClass {
       if (resultExist.length > 0 || resultExist)
         return {
           error: {
-            message: "Contact already exists",
+            message: "El contacto ya existe",
           },
         };
 

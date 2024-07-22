@@ -11,7 +11,7 @@ messagesRouter.get(
 );
 
 
-messagesRouter.get("/verifyChatUser/:idUser", MessageController.verifyChatUser)
+messagesRouter.get("/verifyChatUser/:idUserReceiver", MessageController.verifyChatUser)
 
 messagesRouter.post("/addMessage", MessageController.addMessages);
 
@@ -19,3 +19,4 @@ messagesRouter.post("/addChat", MessageController.addChat);
 
 
 export default messagesRouter;
+

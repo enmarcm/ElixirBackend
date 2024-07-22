@@ -80,7 +80,7 @@ class MessageController {
   static verifyChatUser = async (req: Request, res: Response) => {
     try {
       const {idUser}  = req as any
-      const {idUserReceiver} = req.body
+      const {idUserReceiver} = req.params
 
       const result = await MessagesModelClass.verifyChatUser({
         idUser,

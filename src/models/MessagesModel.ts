@@ -257,26 +257,45 @@ export default class MessagesModelClass {
   static addChat = async ({
     idUserSender,
     idUserReceiver,
+    twoChats = true,
   }: {
     idUserSender: string;
     idUserReceiver: string;
+    twoChats?: boolean;
   }) => {
     try {
-      const addChatToSender = await ITSGooseHandler.addDocument({
+      //Primero vamos a verificar si ya existe un chat entre los dos
+      const chatExist = await ITSGooseHandler.searchOne({
         Model: ChatModel,
-        data: {
-          idUser: idUserSender,
-          idUserReceiver,
-        },
+        condition: { idUser: idUserSender, idUserReceiver },
       });
 
-      const addChatToReceiver = await ITSGooseHandler.addDocument({
+      const addChatToSender = chatExist
+        ? chatExist
+        : await ITSGooseHandler.addDocument({
+            Model: ChatModel,
+            data: {
+              idUser: idUserSender,
+              idUserReceiver,
+            },
+          });
+
+      const chatExistReceiver = await ITSGooseHandler.searchOne({
         Model: ChatModel,
-        data: {
-          idUser: idUserReceiver,
-          idUserReceiver: idUserSender,
-        },
+        condition: { idUser: idUserReceiver, idUserReceiver: idUserSender },
       });
+
+      const addChatToReceiver = twoChats
+        ? chatExistReceiver
+          ? chatExistReceiver
+          : await ITSGooseHandler.addDocument({
+              Model: ChatModel,
+              data: {
+                idUser: idUserReceiver,
+                idUserReceiver: idUserSender,
+              },
+            })
+        : null;
 
       return { addChatToReceiver, addChatToSender };
     } catch (error) {
