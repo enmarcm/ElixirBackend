@@ -45,11 +45,10 @@ MessageController.addMessages = (req, res) => __awaiter(void 0, void 0, void 0, 
             idReceiver,
             content,
         });
-        console.log(result);
         return res.json(result);
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         throw new Error(`Error adding message: ${error}`);
     }
 });

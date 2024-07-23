@@ -1,7 +1,17 @@
 import { ITSGooseHandler } from "../data/instances";
 import { ContactModel, StatusModel, UserModel } from "../typegoose/models";
+import UserModelClass from "./UserModelClass";
 
 export default class StatusModelClass {
+  private static verifyLast24Hours = (dateString: string) => {
+    const date = new Date(dateString); // C
+    const dateActual = new Date();
+    const diff = Math.abs(dateActual.getTime() - date.getTime());
+    const hours = Math.ceil(diff / (1000 * 60 * 60));
+
+    return hours <= 24;
+  };
+
   static async getAllStatusContacts({ idUser }: { idUser: string }) {
     try {
       const contacts = await ITSGooseHandler.searchAll({
@@ -11,15 +21,6 @@ export default class StatusModelClass {
 
       const contactWithStatusAndUser = await Promise.all(
         contacts.map(async (contact: any) => {
-            const verifyLast24Hours = (dateString: string) => {
-                const date = new Date(dateString); // C
-                const dateActual = new Date();
-                const diff = Math.abs(dateActual.getTime() - date.getTime());
-                const hours = Math.ceil(diff / (1000 * 60 * 60));
-              
-                return hours <= 24;
-              };
-
           const status = await ITSGooseHandler.searchAll({
             Model: StatusModel,
             condition: { idUser: contact.idUserContact },
@@ -27,7 +28,7 @@ export default class StatusModelClass {
           });
 
           const statusActive = status.map((status: any) => {
-            if (verifyLast24Hours(status.date)) return status;
+            if (this.verifyLast24Hours(status.date)) return status;
           });
 
           const user = await ITSGooseHandler.searchOne({
@@ -44,6 +45,7 @@ export default class StatusModelClass {
               name: contact.name,
               image: user.image,
               userName: user.userName,
+              idUser: user.id,
             },
             status: statusActive,
           };
@@ -52,6 +54,25 @@ export default class StatusModelClass {
         })
       );
       return contactWithStatusAndUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getStatusUser({ idUser }: { idUser: string }) {
+    try {
+      const status = await ITSGooseHandler.searchAll({
+        Model: StatusModel,
+        condition: { idUser },
+      });
+
+      console.log(status);
+
+      const statusActive = status.map((status: any) => {
+        if (this.verifyLast24Hours(status.date)) return status;
+      });
+
+      return statusActive;
     } catch (error) {
       throw error;
     }
@@ -88,7 +109,7 @@ export default class StatusModelClass {
       //Verificar se o status pertence ao usuário
       const status = await ITSGooseHandler.searchOne({
         Model: StatusModel,
-        condition: { id: idStatus, idUSer: idUser },
+        condition: { _id: idStatus, idUser },
       });
 
       if (!status) throw new Error("Status not found");
@@ -102,6 +123,29 @@ export default class StatusModelClass {
     } catch (error) {
       console.error(error);
       throw new Error("Error to delete status");
+    }
+  }
+
+  static async obtainMyActivesStatus({ idUser }: { idUser: string }) {
+    try {
+      const status = await ITSGooseHandler.searchAll({
+        Model: StatusModel,
+        condition: { idUser },
+      });
+
+      const statusActive = status.map((status: any) => {
+        if (this.verifyLast24Hours(status.date)) return status;
+      });
+
+      const userInfo = await UserModelClass.getUserInfo({ idUser });
+
+      if (!statusActive) return { userInfo, status: [] };
+
+      const objResponse = { contact: userInfo, status: statusActive };
+
+      return objResponse;
+    } catch (error) {
+      throw error;
     }
   }
 }

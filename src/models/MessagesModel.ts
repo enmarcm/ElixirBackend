@@ -317,11 +317,10 @@ export default class MessagesModelClass {
         condition: { idUser, idUserReceiver },
       });
 
-      console.log(result);
 
       return result;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error(`Error verifying chat: ${error}`);
     }
   };

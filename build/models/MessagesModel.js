@@ -236,11 +236,10 @@ MessagesModelClass.verifyChatUser = (_f) => __awaiter(void 0, [_f], void 0, func
             Model: models_1.ChatModel,
             condition: { idUser, idUserReceiver },
         });
-        console.log(result);
         return result;
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         throw new Error(`Error verifying chat: ${error}`);
     }
 });

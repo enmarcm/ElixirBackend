@@ -10,7 +10,7 @@ interface UserSocketMap {
 const userSocketMap: UserSocketMap = {};
 
 export const configureSocket = (io: Server) => {
-  console.log("cree el socket");
+  // console.log("cree el socket");
 
   io.on("connection", (socket) => {
     socket.on("register", async (token: string) => {
@@ -45,13 +45,9 @@ export const configureSocket = (io: Server) => {
         socket.data.image = user?.image;
         socket.data.role = user.role;
 
-        // console.log(socket.data)
 
         userSocketMap[user.id] = socket.id;
 
-        // console.log(
-        //   `User ${user.id} registered with socket ID ${socket.id} via register event`
-        // );
 
         socket.emit("registered", `User ${user.id} successfully registered`);
       } catch (error) {
@@ -63,13 +59,10 @@ export const configureSocket = (io: Server) => {
     socket.on("privateMessage", ({ sender, receiver, message }) => {
 
       
-      // console.log(`Los datos son: ${sender}, ${receiver}, ${message}`)
 
       const receiverSocketId = userSocketMap[receiver];
       if (receiverSocketId) {
 
-        console.log(`Ell mesane es`)
-        console.log(message)
 
         const dataSend = {
           sender,
@@ -109,52 +102,3 @@ export const configureSocket = (io: Server) => {
   });
 };
 
-// import { Server } from "socket.io";
-
-// interface UserSocketMap {
-//   [userId: string]: string;
-// }
-
-// const userSocketMap: UserSocketMap = {};
-
-// export const configureSocket = (io: Server) => {
-//   console.log('cree el socket');
-
-//   io.on("connection", (socket) => {
-//     console.log("New client connected");
-
-//     // Almacenar el ID del socket junto con el identificador del usuario
-//     socket.on("register", (userId) => {
-//       userSocketMap[userId] = socket.id;
-//       console.log(`User ${userId} registered with socket ID ${socket.id}`);
-//     });
-
-//     socket.on("privateMessage", ({ sender, receiver, message }) => {
-//       const receiverSocketId = userSocketMap[receiver];
-//       if (receiverSocketId) {
-//         io.to(receiverSocketId).emit("privateMessage", { sender, message });
-//       } else {
-//         console.log(`User ${receiver} is not connected`);
-//       }
-//     });
-
-//     socket.on("joinGroup", (group) => {
-//       socket.join(group);
-//     });
-
-//     socket.on("groupMessage", ({ group, sender, message }) => {
-//       io.to(group).emit("groupMessage", { sender, message });
-//     });
-
-//     socket.on("disconnect", () => {
-//       console.log("Client disconnected");
-//       // Eliminar el ID del socket del mapa cuando el usuario se desconecta
-//       for (const userId in userSocketMap) {
-//         if (userSocketMap[userId] === socket.id) {
-//           delete userSocketMap[userId];
-//           break;
-//         }
-//       }
-//     });
-//   });
-// };

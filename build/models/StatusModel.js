@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const instances_1 = require("../data/instances");
 const models_1 = require("../typegoose/models");
+const UserModelClass_1 = __importDefault(require("./UserModelClass"));
 class StatusModelClass {
     static getAllStatusContacts(_a) {
         return __awaiter(this, arguments, void 0, function* ({ idUser }) {
@@ -20,20 +24,13 @@ class StatusModelClass {
                     condition: { idUserOwner: idUser },
                 });
                 const contactWithStatusAndUser = yield Promise.all(contacts.map((contact) => __awaiter(this, void 0, void 0, function* () {
-                    const verifyLast24Hours = (dateString) => {
-                        const date = new Date(dateString); // C
-                        const dateActual = new Date();
-                        const diff = Math.abs(dateActual.getTime() - date.getTime());
-                        const hours = Math.ceil(diff / (1000 * 60 * 60));
-                        return hours <= 24;
-                    };
                     const status = yield instances_1.ITSGooseHandler.searchAll({
                         Model: models_1.StatusModel,
                         condition: { idUser: contact.idUserContact },
                         transform: { id: 1, description: 1, image: 1, date: 1, seen: 1 },
                     });
                     const statusActive = status.map((status) => {
-                        if (verifyLast24Hours(status.date))
+                        if (this.verifyLast24Hours(status.date))
                             return status;
                     });
                     const user = yield instances_1.ITSGooseHandler.searchOne({
@@ -49,12 +46,32 @@ class StatusModelClass {
                             name: contact.name,
                             image: user.image,
                             userName: user.userName,
+                            idUser: user.id,
                         },
                         status: statusActive,
                     };
                     return sendObj;
                 })));
                 return contactWithStatusAndUser;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    static getStatusUser(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ idUser }) {
+            try {
+                const status = yield instances_1.ITSGooseHandler.searchAll({
+                    Model: models_1.StatusModel,
+                    condition: { idUser },
+                });
+                console.log(status);
+                const statusActive = status.map((status) => {
+                    if (this.verifyLast24Hours(status.date))
+                        return status;
+                });
+                return statusActive;
             }
             catch (error) {
                 throw error;
@@ -87,7 +104,7 @@ class StatusModelClass {
                 //Verificar se o status pertence ao usuário
                 const status = yield instances_1.ITSGooseHandler.searchOne({
                     Model: models_1.StatusModel,
-                    condition: { id: idStatus, idUSer: idUser },
+                    condition: { _id: idStatus, idUser },
                 });
                 if (!status)
                     throw new Error("Status not found");
@@ -103,5 +120,34 @@ class StatusModelClass {
             }
         });
     }
+    static obtainMyActivesStatus(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ idUser }) {
+            try {
+                const status = yield instances_1.ITSGooseHandler.searchAll({
+                    Model: models_1.StatusModel,
+                    condition: { idUser },
+                });
+                const statusActive = status.map((status) => {
+                    if (this.verifyLast24Hours(status.date))
+                        return status;
+                });
+                const userInfo = yield UserModelClass_1.default.getUserInfo({ idUser });
+                if (!statusActive)
+                    return { userInfo, status: [] };
+                const objResponse = { contact: userInfo, status: statusActive };
+                return objResponse;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
+StatusModelClass.verifyLast24Hours = (dateString) => {
+    const date = new Date(dateString); // C
+    const dateActual = new Date();
+    const diff = Math.abs(dateActual.getTime() - date.getTime());
+    const hours = Math.ceil(diff / (1000 * 60 * 60));
+    return hours <= 24;
+};
 exports.default = StatusModelClass;

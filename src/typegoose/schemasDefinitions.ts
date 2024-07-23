@@ -186,7 +186,7 @@ export class Status {
   @prop({ required: true, type: Array<User>, ref: () => User })
   public seen!: Array<User>;
 
-  @prop({ required: true, type: String })
+  @prop({ required: false, type: String, default: "" })
   public description!: string;
 
   @prop({ required: true, type: String })

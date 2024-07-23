@@ -27,6 +27,17 @@ statusRouter.get("/getAllStatusContacts", (req, res) => __awaiter(void 0, void 0
         throw new Error(error);
     }
 }));
+statusRouter.get("/getStatusUser/:idUser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idUser } = req.params;
+        console.log(`El id del usuario es: ${idUser}`);
+        const result = yield StatusModel_1.default.getStatusUser({ idUser });
+        return res.json(result);
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+}));
 statusRouter.post("/createStatus", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { description, image } = req.body;
@@ -54,4 +65,15 @@ statusRouter.delete("/deleteStatus/:idStatus", (req, res) => {
         throw new Error("Error to delete status");
     }
 });
+statusRouter.get("/getMyStatus", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idUser } = req;
+        const result = yield StatusModel_1.default.obtainMyActivesStatus({ idUser });
+        return res.json(result);
+    }
+    catch (error) {
+        console.error(error);
+        throw new Error("Error to get my status");
+    }
+}));
 exports.default = statusRouter;

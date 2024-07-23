@@ -17,6 +17,20 @@ statusRouter.get("/getAllStatusContacts", async (req, res) => {
   }
 });
 
+statusRouter.get("/getStatusUser/:idUser", async (req, res) => {
+  try {
+    const { idUser } = req.params;
+
+    console.log(`El id del usuario es: ${idUser}`);
+
+    const result = await StatusModelClass.getStatusUser({ idUser });
+
+    return res.json(result);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+})
+
 statusRouter.post("/createStatus", async (req, res) => {
   try {
     const { description, image } = req.body;
@@ -49,4 +63,18 @@ statusRouter.delete("/deleteStatus/:idStatus", (req, res) => {
     throw new Error("Error to delete status");
   }
 });
+
+statusRouter.get("/getMyStatus", async (req, res) => {
+  try {
+    const { idUser } = req as any;
+
+    const result = await StatusModelClass.obtainMyActivesStatus({ idUser });
+
+    return res.json(result);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error to get my status");
+  }
+});
+
 export default statusRouter;

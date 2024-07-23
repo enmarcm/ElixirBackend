@@ -199,7 +199,7 @@ __decorate([
     (0, typegoose_1.prop)({ required: true, type: (Array), ref: () => User })
 ], Status.prototype, "seen", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, type: String })
+    (0, typegoose_1.prop)({ required: false, type: String, default: "" })
 ], Status.prototype, "description", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true, type: String })
