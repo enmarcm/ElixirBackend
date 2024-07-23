@@ -66,21 +66,21 @@ class AuthController {
         return __awaiter(this, arguments, void 0, function* ({ userData, code, }) {
             try {
                 const htmlContent = `
-        <div style="text-align: center; font-family: Arial, sans-serif; background-color: #191414; color: #1DB954; padding: 20px; border-radius: 10px;">
-  <h1 style="color: #1DB954;">SpotyFake</h1>
+        <div style="text-align: center; font-family: 'Arial', sans-serif; background-color: #000; color: #FFF; padding: 20px; border-radius: 10px;">
+  <h1 style="color: #007BFF;">Elixir</h1>
   <p style="font-size: 1.2em;">Thank you for registering with us!</p>
   <p style="font-size: 1.2em;">Please click the button below to activate your account.</p>
   <a href="${enums_1.URLS.ACTIVATE_USER}/${code}" 
-     style="display: inline-block; background-color: #1DB954; color: #191414; padding: 10px 20px; text-decoration: none; font-size: 1.5em; margin: 20px auto; border-radius: 5px; transition: background-color 0.3s, color 0.3s;">
+     style="display: inline-block; background-color: #007BFF; color: #FFF; padding: 10px 20px; text-decoration: none; font-size: 1.5em; margin: 20px auto; border-radius: 5px; transition: background-color 0.3s, color 0.3s;">
     Activate Account
   </a>
 </div>
 
 <style>
   a:hover {
-    background-color: #191414;
-    color: #1DB954;
-    border: 2px solid #1DB954;
+    background-color: #FFF;
+    color: #000;
+    border: 2px solid #007BFF;
   }
 </style>
       `;
@@ -138,6 +138,7 @@ class AuthController {
                 const data = (yield AuthController.registerUser({
                     req,
                 }));
+                ``;
                 const isMailSent = yield AuthController.sendVerificationMail({
                     userData: data === null || data === void 0 ? void 0 : data.data,
                     code: data === null || data === void 0 ? void 0 : data.code,
