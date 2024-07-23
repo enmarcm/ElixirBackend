@@ -65,6 +65,8 @@ class AuthController {
     static sendVerificationMail(_a) {
         return __awaiter(this, arguments, void 0, function* ({ userData, code, }) {
             try {
+                console.log("Los datos de registro son");
+                console.log(userData);
                 const htmlContent = `
         <div style="text-align: center; font-family: 'Arial', sans-serif; background-color: #000; color: #FFF; padding: 20px; border-radius: 10px;">
   <h1 style="color: #007BFF;">Elixir</h1>
@@ -86,7 +88,7 @@ class AuthController {
       `;
                 instances_1.INodeMailer.sendMailHtml({
                     to: userData.email,
-                    subject: "Activate your account - SPOTYFAKE",
+                    subject: "Activate your account - ELIXIR",
                     html: htmlContent,
                 });
                 return true;
@@ -118,7 +120,7 @@ class AuthController {
                     return res.json({ error: "Error activating user" });
                 // Eliminar el activationRecord
                 const deletedRecord = yield ActivateModelClass_1.default.removeActivateDocument({
-                    idActivation: activationRecord._id,
+                    idActivation: activationRecord.id,
                 });
                 if (enums_1.Constants.ERROR in deletedRecord)
                     return res.json({ error: "Error deleting activation record" });
