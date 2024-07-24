@@ -78,20 +78,35 @@ class MessageController {
 
   static verifyChatUser = async (req: Request, res: Response) => {
     try {
-      const {idUser}  = req as any
-      const {idUserReceiver} = req.params
+      const { idUser } = req as any;
+      const { idUserReceiver } = req.params;
 
       const result = await MessagesModelClass.verifyChatUser({
         idUser,
-        idUserReceiver
-      })
+        idUserReceiver,
+      });
 
-      return res.json(result)
+      return res.json(result);
     } catch (error) {
       console.error(`Hubo un error al obtener los mensajes: ${error}`);
       throw new Error(`Error getting messages: ${error}`);
     }
-  }
+  };
+
+  static deleteChat = async (req: Request, res: Response) => {
+    try {
+      const { idChat } = req.params;
+
+      const result = await MessagesModelClass.deleteChat({
+        idChat,
+      });
+
+      return res.json(result);
+    } catch (error) {
+      console.error(`Hubo un error al obtener los mensajes: ${error}`);
+      throw new Error(`Error getting messages: ${error}`);
+    }
+  };
 }
 
 export default MessageController;

@@ -185,28 +185,33 @@ export default class MessagesModelClass {
   }) => {
     try {
       const LIMIT_PAGE_CHAT = 15;
-
+  
       const chats = (await ITSGooseHandler.searchAll({
         Model: ChatModel,
         condition: { idUser },
         limit: LIMIT_PAGE_CHAT,
         offset: (page - 1) * LIMIT_PAGE_CHAT,
       })) as any;
-
-      const chatsWithLastMessage = await Promise.all(
+  
+      // Paso 1: Obtener chats con el último mensaje
+      const chatsWithLastMessage = (await Promise.all(
         chats.map(async (chat: any) => {
           const lastMessage = await ITSGooseHandler.searchOne({
             Model: ChatMessageModel,
             condition: { idChat: chat.id },
             transform: { idMessage: 1 },
           });
-
+  
+          if (!lastMessage) return null;
+  
           const lastMessageContent = await ITSGooseHandler.searchOne({
             Model: MessageModel,
             condition: { _id: lastMessage.idMessage },
             transform: { content: 1, date: 1, read: 1, id: 1, idUserSender: 1 },
           });
-
+  
+          if (!lastMessageContent) return null;
+  
           const lastMessageContentParsed = {
             id: lastMessageContent.id,
             idUserSender: lastMessageContent.idUserSender,
@@ -217,36 +222,43 @@ export default class MessagesModelClass {
             },
             date: lastMessageContent.date,
           };
-
+  
           return {
             ...chat,
             lastMessageContent: lastMessageContentParsed,
           };
         })
-      );
-
-      const chatsWithLastMessageAndUser = await Promise.all(
+      )).filter(chat => chat !== null); // Filtrar chats sin último mensaje
+  
+      // Paso 2: Obtener chats con receptor
+      const chatsWithLastMessageAndUser = (await Promise.all(
         chatsWithLastMessage.map(async (chat: any) => {
+          if (!chat.lastMessageContent) return null;
+  
           const userLastMessage = await ITSGooseHandler.searchOne({
             Model: UserModel,
             condition: { _id: chat.lastMessageContent.idUserSender },
             transform: { userName: 1, id: 1, image: 1 },
           });
-
+  
+          if (!userLastMessage) return null;
+  
           const userReceiver = await ITSGooseHandler.searchOne({
             Model: UserModel,
             condition: { _id: chat.idUserReceiver },
             transform: { userName: 1, id: 1, image: 1 },
           });
-
+  
+          if (!userReceiver) return null;
+  
           return {
             ...chat,
             userLastMessage,
             userReceiver,
           };
         })
-      );
-
+      )).filter(chat => chat !== null); // Filtrar chats sin receptor
+  
       return chatsWithLastMessageAndUser;
     } catch (error) {
       console.error(`Hubo un error al obtener los chats: ${error}`);
@@ -322,5 +334,19 @@ export default class MessagesModelClass {
       console.error(error);
       throw new Error(`Error verifying chat: ${error}`);
     }
+  };
+
+  static deleteChat = async ({ idChat }: { idChat: string }) => {
+    try {
+      await ITSGooseHandler.removeDocument({
+        Model: ChatModel,
+        id: idChat,
+      });
+
+      await ITSGooseHandler.removeAllDocumentsByCondition({
+        Model: ChatMessageModel,
+        condition: { idChat },
+      });
+    } catch (error) {}
   };
 }

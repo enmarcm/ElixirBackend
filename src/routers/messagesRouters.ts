@@ -17,6 +17,8 @@ messagesRouter.post("/addMessage", MessageController.addMessages);
 
 messagesRouter.post("/addChat", MessageController.addChat);
 
+messagesRouter.delete("/deleteChat/:idChat", MessageController.deleteChat);
+
 
 export default messagesRouter;
 

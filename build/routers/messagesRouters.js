@@ -11,4 +11,5 @@ messagesRouter.get("/getMessages/:idChat/:page", messageController_1.default.get
 messagesRouter.get("/verifyChatUser/:idUserReceiver", messageController_1.default.verifyChatUser);
 messagesRouter.post("/addMessage", messageController_1.default.addMessages);
 messagesRouter.post("/addChat", messageController_1.default.addChat);
+messagesRouter.delete("/deleteChat/:idChat", messageController_1.default.deleteChat);
 exports.default = messagesRouter;

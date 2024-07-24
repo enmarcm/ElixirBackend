@@ -90,7 +90,20 @@ MessageController.verifyChatUser = (req, res) => __awaiter(void 0, void 0, void 
         const { idUserReceiver } = req.params;
         const result = yield MessagesModel_1.default.verifyChatUser({
             idUser,
-            idUserReceiver
+            idUserReceiver,
+        });
+        return res.json(result);
+    }
+    catch (error) {
+        console.error(`Hubo un error al obtener los mensajes: ${error}`);
+        throw new Error(`Error getting messages: ${error}`);
+    }
+});
+MessageController.deleteChat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idChat } = req.params;
+        const result = yield MessagesModel_1.default.deleteChat({
+            idChat,
         });
         return res.json(result);
     }

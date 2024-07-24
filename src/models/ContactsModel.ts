@@ -93,4 +93,22 @@ export default class ContactModelClass {
       throw new Error(`Error adding contact: ${error}`);
     }
   };
+
+  static async deleteContact({
+    idContact,
+  }: {
+    idContact: string;
+  }) {
+    try {
+      const result = await ITSGooseHandler.removeDocument({
+        Model: ContactModel,
+        id: idContact,
+      });
+
+      return result;
+    } catch (error) {
+      console.error(`Hubo un error al eliminar el contacto: ${error}`);
+      throw new Error(`Error deleting contact: ${error}`);
+    }
+  }
 }

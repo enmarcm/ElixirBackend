@@ -148,17 +148,22 @@ MessagesModelClass.gettAllChatsByUser = (_d) => __awaiter(void 0, [_d], void 0, 
             limit: LIMIT_PAGE_CHAT,
             offset: (page - 1) * LIMIT_PAGE_CHAT,
         }));
-        const chatsWithLastMessage = yield Promise.all(chats.map((chat) => __awaiter(void 0, void 0, void 0, function* () {
+        // Paso 1: Obtener chats con el último mensaje
+        const chatsWithLastMessage = (yield Promise.all(chats.map((chat) => __awaiter(void 0, void 0, void 0, function* () {
             const lastMessage = yield instances_1.ITSGooseHandler.searchOne({
                 Model: models_1.ChatMessageModel,
                 condition: { idChat: chat.id },
                 transform: { idMessage: 1 },
             });
+            if (!lastMessage)
+                return null;
             const lastMessageContent = yield instances_1.ITSGooseHandler.searchOne({
                 Model: models_1.MessageModel,
                 condition: { _id: lastMessage.idMessage },
                 transform: { content: 1, date: 1, read: 1, id: 1, idUserSender: 1 },
             });
+            if (!lastMessageContent)
+                return null;
             const lastMessageContentParsed = {
                 id: lastMessageContent.id,
                 idUserSender: lastMessageContent.idUserSender,
@@ -170,21 +175,28 @@ MessagesModelClass.gettAllChatsByUser = (_d) => __awaiter(void 0, [_d], void 0, 
                 date: lastMessageContent.date,
             };
             return Object.assign(Object.assign({}, chat), { lastMessageContent: lastMessageContentParsed });
-        })));
-        const chatsWithLastMessageAndUser = yield Promise.all(chatsWithLastMessage.map((chat) => __awaiter(void 0, void 0, void 0, function* () {
+        })))).filter(chat => chat !== null); // Filtrar chats sin último mensaje
+        // Paso 2: Obtener chats con receptor
+        const chatsWithLastMessageAndUser = (yield Promise.all(chatsWithLastMessage.map((chat) => __awaiter(void 0, void 0, void 0, function* () {
+            if (!chat.lastMessageContent)
+                return null;
             const userLastMessage = yield instances_1.ITSGooseHandler.searchOne({
                 Model: models_1.UserModel,
                 condition: { _id: chat.lastMessageContent.idUserSender },
                 transform: { userName: 1, id: 1, image: 1 },
             });
+            if (!userLastMessage)
+                return null;
             const userReceiver = yield instances_1.ITSGooseHandler.searchOne({
                 Model: models_1.UserModel,
                 condition: { _id: chat.idUserReceiver },
                 transform: { userName: 1, id: 1, image: 1 },
             });
+            if (!userReceiver)
+                return null;
             return Object.assign(Object.assign({}, chat), { userLastMessage,
                 userReceiver });
-        })));
+        })))).filter(chat => chat !== null); // Filtrar chats sin receptor
         return chatsWithLastMessageAndUser;
     }
     catch (error) {
@@ -242,5 +254,18 @@ MessagesModelClass.verifyChatUser = (_f) => __awaiter(void 0, [_f], void 0, func
         console.error(error);
         throw new Error(`Error verifying chat: ${error}`);
     }
+});
+MessagesModelClass.deleteChat = (_g) => __awaiter(void 0, [_g], void 0, function* ({ idChat }) {
+    try {
+        yield instances_1.ITSGooseHandler.removeDocument({
+            Model: models_1.ChatModel,
+            id: idChat,
+        });
+        yield instances_1.ITSGooseHandler.removeAllDocumentsByCondition({
+            Model: models_1.ChatMessageModel,
+            condition: { idChat },
+        });
+    }
+    catch (error) { }
 });
 exports.default = MessagesModelClass;

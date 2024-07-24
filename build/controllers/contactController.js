@@ -56,4 +56,17 @@ ContactController.addContact = (req, res) => __awaiter(void 0, void 0, void 0, f
         throw new Error(`Error adding contact: ${error}`);
     }
 });
+ContactController.deleteContact = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idContact } = req.params;
+        const result = yield ContactsModel_1.default.deleteContact({
+            idContact,
+        });
+        return res.json(result);
+    }
+    catch (error) {
+        console.error(`Hubo un error al eliminar el contacto: ${error}`);
+        throw new Error(`Error deleting contact: ${error}`);
+    }
+});
 exports.default = ContactController;

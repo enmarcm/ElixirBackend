@@ -13,6 +13,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const instances_1 = require("../data/instances");
 const models_1 = require("../typegoose/models");
 class ContactModelClass {
+    static deleteContact(_b) {
+        return __awaiter(this, arguments, void 0, function* ({ idContact, }) {
+            try {
+                const result = yield instances_1.ITSGooseHandler.removeDocument({
+                    Model: models_1.ContactModel,
+                    id: idContact,
+                });
+                return result;
+            }
+            catch (error) {
+                console.error(`Hubo un error al eliminar el contacto: ${error}`);
+                throw new Error(`Error deleting contact: ${error}`);
+            }
+        });
+    }
 }
 _a = ContactModelClass;
 ContactModelClass.getAllContacts = (_b) => __awaiter(void 0, [_b], void 0, function* ({ idUser, page = 1, limit = 20, }) {

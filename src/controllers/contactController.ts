@@ -45,4 +45,19 @@ export default class ContactController {
       throw new Error(`Error adding contact: ${error}`);
     }
   };
+
+  static deleteContact = async (req: Request, res: Response) => {
+    try {
+      const { idContact } = req.params;
+
+      const result = await ContactModelClass.deleteContact({
+        idContact,
+      });
+
+      return res.json(result);
+    } catch (error) {
+      console.error(`Hubo un error al eliminar el contacto: ${error}`);
+      throw new Error(`Error deleting contact: ${error}`);
+    }
+  }
 }
