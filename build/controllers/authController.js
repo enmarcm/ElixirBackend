@@ -18,6 +18,7 @@ const CryptManager_1 = __importDefault(require("../utils/CryptManager"));
 const enums_1 = require("../enums");
 const UserModelClass_1 = __importDefault(require("../models/UserModelClass"));
 const ActivateModelClass_1 = __importDefault(require("../models/ActivateModelClass"));
+const constants_1 = require("../constants");
 class AuthController {
     static verifyData({ req }) {
         const body = req.body;
@@ -122,13 +123,15 @@ class AuthController {
                 const deletedRecord = yield ActivateModelClass_1.default.removeActivateDocument({
                     idActivation: activationRecord.id,
                 });
-                if (enums_1.Constants.ERROR in deletedRecord)
-                    return res.json({ error: "Error deleting activation record" });
-                return res.json({ message: "User activated successfully" });
+                if (enums_1.Constants.ERROR in deletedRecord) {
+                    console.error("Error deleting activation record");
+                    return res.send(constants_1.HTMLS_RESPONSES.ERROR);
+                }
+                return res.send(constants_1.HTMLS_RESPONSES.ACTIVE_USER);
             }
             catch (error) {
                 console.error(error);
-                return res.json({ error: "Error activating user" });
+                return res.send(constants_1.HTMLS_RESPONSES.ERROR);
             }
         });
     }

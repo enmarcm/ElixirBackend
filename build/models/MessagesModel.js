@@ -87,7 +87,7 @@ MessagesModelClass.addMessage = (_b) => __awaiter(void 0, [_b], void 0, function
 });
 MessagesModelClass.getMessageByChat = (_c) => __awaiter(void 0, [_c], void 0, function* ({ idChat, page = 1, idUser, }) {
     try {
-        const LIMIT_PAGE_MESSAGE = 40;
+        const LIMIT_PAGE_MESSAGE = 300;
         //Ok ahora necesito hacer una logica, para que me traiga los mensajes pero los ultimos registros, y a medida que vaya aumentando la pagina me traiga los anteriores
         // Verificar que el chat realmente existe
         const chat = yield models_1.ChatModel.findById(idChat);

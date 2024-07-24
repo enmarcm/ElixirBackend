@@ -108,7 +108,7 @@ export default class MessagesModelClass {
     idUser: string;
   }) => {
     try {
-      const LIMIT_PAGE_MESSAGE = 40;
+      const LIMIT_PAGE_MESSAGE = 300;
 
       //Ok ahora necesito hacer una logica, para que me traiga los mensajes pero los ultimos registros, y a medida que vaya aumentando la pagina me traiga los anteriores
 
@@ -316,7 +316,6 @@ export default class MessagesModelClass {
         Model: ChatModel,
         condition: { idUser, idUserReceiver },
       });
-
 
       return result;
     } catch (error) {

@@ -6,6 +6,7 @@ import CryptManager from "../utils/CryptManager";
 import { Constants, URLS } from "../enums";
 import UserModelClass from "../models/UserModelClass";
 import ActivateModelClass from "../models/ActivateModelClass";
+import { HTMLS_RESPONSES } from "../constants";
 
 class AuthController {
   private static verifyData({ req }: { req: Request }): void {
@@ -137,14 +138,15 @@ class AuthController {
         idActivation: activationRecord.id,
       });
 
+      if (Constants.ERROR in deletedRecord) {
+        console.error("Error deleting activation record");
+        return res.send(HTMLS_RESPONSES.ERROR);
+      }
 
-      if (Constants.ERROR in deletedRecord)
-        return res.json({ error: "Error deleting activation record" });
-
-      return res.json({ message: "User activated successfully" });
+      return res.send(HTMLS_RESPONSES.ACTIVE_USER);
     } catch (error) {
       console.error(error);
-      return res.json({ error: "Error activating user" });
+      return res.send(HTMLS_RESPONSES.ERROR);
     }
   }
 
