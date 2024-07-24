@@ -100,8 +100,6 @@ class MessageController {
       const result = await MessagesModelClass.deleteChat({
         idChat,
       });
-      console.log(idChat);
-      console.log(result)
 
       return res.json(result);
     } catch (error) {

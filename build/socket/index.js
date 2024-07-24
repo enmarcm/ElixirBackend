@@ -63,6 +63,8 @@ const configureSocket = (io) => {
                         email: socket.data.email,
                     },
                 };
+                console.log('Mensaje recibido en socket');
+                console.log(message);
                 io.to(receiverSocketId).emit("privateMessage", dataSend);
             }
             else {

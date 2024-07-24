@@ -58,8 +58,6 @@ export const configureSocket = (io: Server) => {
 
     socket.on("privateMessage", ({ sender, receiver, message }) => {
 
-      
-
       const receiverSocketId = userSocketMap[receiver];
       if (receiverSocketId) {
 
@@ -73,6 +71,9 @@ export const configureSocket = (io: Server) => {
             email: socket.data.email,
           },
         }
+
+        console.log('Mensaje recibido en socket')
+        console.log(message)
 
 
         io.to(receiverSocketId).emit("privateMessage", dataSend);

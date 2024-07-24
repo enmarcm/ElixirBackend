@@ -105,8 +105,6 @@ MessageController.deleteChat = (req, res) => __awaiter(void 0, void 0, void 0, f
         const result = yield MessagesModel_1.default.deleteChat({
             idChat,
         });
-        console.log(idChat);
-        console.log(result);
         return res.json(result);
     }
     catch (error) {
