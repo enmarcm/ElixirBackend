@@ -27,9 +27,7 @@ export default class StatusModelClass {
             transform: { id: 1, description: 1, image: 1, date: 1, seen: 1 },
           });
 
-          const statusActive = status.map((status: any) => {
-            if (this.verifyLast24Hours(status.date)) return status;
-          });
+          const statusActive = status.filter((status: any) => this.verifyLast24Hours(status.date));
 
           const user = await ITSGooseHandler.searchOne({
             Model: UserModel,
@@ -68,9 +66,10 @@ export default class StatusModelClass {
 
       console.log(status);
 
-      const statusActive = status.map((status: any) => {
-        if (this.verifyLast24Hours(status.date)) return status;
-      });
+      const statusActive = status.filter((status: any) => this.verifyLast24Hours(status.date));
+
+      console.log('LLos estados del usuario son: ');
+      console.log(statusActive);
 
       return statusActive;
     } catch (error) {
@@ -133,9 +132,7 @@ export default class StatusModelClass {
         condition: { idUser },
       });
 
-      const statusActive = status.map((status: any) => {
-        if (this.verifyLast24Hours(status.date)) return status;
-      });
+      const statusActive = status.filter((status: any) => this.verifyLast24Hours(status.date));
 
       const userInfo = await UserModelClass.getUserInfo({ idUser });
 

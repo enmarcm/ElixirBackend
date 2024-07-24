@@ -29,10 +29,7 @@ class StatusModelClass {
                         condition: { idUser: contact.idUserContact },
                         transform: { id: 1, description: 1, image: 1, date: 1, seen: 1 },
                     });
-                    const statusActive = status.map((status) => {
-                        if (this.verifyLast24Hours(status.date))
-                            return status;
-                    });
+                    const statusActive = status.filter((status) => this.verifyLast24Hours(status.date));
                     const user = yield instances_1.ITSGooseHandler.searchOne({
                         Model: models_1.UserModel,
                         condition: { _id: contact.idUserContact },
@@ -67,10 +64,9 @@ class StatusModelClass {
                     condition: { idUser },
                 });
                 console.log(status);
-                const statusActive = status.map((status) => {
-                    if (this.verifyLast24Hours(status.date))
-                        return status;
-                });
+                const statusActive = status.filter((status) => this.verifyLast24Hours(status.date));
+                console.log('LLos estados del usuario son: ');
+                console.log(statusActive);
                 return statusActive;
             }
             catch (error) {
@@ -127,10 +123,7 @@ class StatusModelClass {
                     Model: models_1.StatusModel,
                     condition: { idUser },
                 });
-                const statusActive = status.map((status) => {
-                    if (this.verifyLast24Hours(status.date))
-                        return status;
-                });
+                const statusActive = status.filter((status) => this.verifyLast24Hours(status.date));
                 const userInfo = yield UserModelClass_1.default.getUserInfo({ idUser });
                 if (!statusActive)
                     return { userInfo, status: [] };
