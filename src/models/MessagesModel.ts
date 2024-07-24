@@ -338,15 +338,20 @@ export default class MessagesModelClass {
 
   static deleteChat = async ({ idChat }: { idChat: string }) => {
     try {
-      await ITSGooseHandler.removeDocument({
+      const data1 = await ITSGooseHandler.removeDocument({
         Model: ChatModel,
         id: idChat,
       });
 
-      await ITSGooseHandler.removeAllDocumentsByCondition({
+      const data2 = await ITSGooseHandler.removeAllDocumentsByCondition({
         Model: ChatMessageModel,
         condition: { idChat },
       });
-    } catch (error) {}
+
+      return { data1, data2 };
+    } catch (error) {
+      console.error(`Hubo un error al eliminar el chat: ${error}`);
+      throw new Error(`Error deleting chat: ${error}`);
+    }
   };
 }

@@ -257,15 +257,19 @@ MessagesModelClass.verifyChatUser = (_f) => __awaiter(void 0, [_f], void 0, func
 });
 MessagesModelClass.deleteChat = (_g) => __awaiter(void 0, [_g], void 0, function* ({ idChat }) {
     try {
-        yield instances_1.ITSGooseHandler.removeDocument({
+        const data1 = yield instances_1.ITSGooseHandler.removeDocument({
             Model: models_1.ChatModel,
             id: idChat,
         });
-        yield instances_1.ITSGooseHandler.removeAllDocumentsByCondition({
+        const data2 = yield instances_1.ITSGooseHandler.removeAllDocumentsByCondition({
             Model: models_1.ChatMessageModel,
             condition: { idChat },
         });
+        return { data1, data2 };
     }
-    catch (error) { }
+    catch (error) {
+        console.error(`Hubo un error al eliminar el chat: ${error}`);
+        throw new Error(`Error deleting chat: ${error}`);
+    }
 });
 exports.default = MessagesModelClass;
