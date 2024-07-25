@@ -63,8 +63,6 @@ const configureSocket = (io) => {
                         email: socket.data.email,
                     },
                 };
-                console.log('Mensaje recibido en socket');
-                console.log(message);
                 io.to(receiverSocketId).emit("privateMessage", dataSend);
             }
             else {
@@ -75,7 +73,16 @@ const configureSocket = (io) => {
             socket.join(group);
         });
         socket.on("groupMessage", ({ group, sender, message }) => {
-            io.to(group).emit("groupMessage", { sender, message });
+            const dataSend = {
+                sender,
+                message,
+                date: new Date().toISOString(),
+                senderData: {
+                    userName: socket.data.userName,
+                    email: socket.data.email,
+                },
+            };
+            io.to(group).emit("groupMessage", dataSend);
         });
         socket.on("disconnect", () => {
             console.log("Client disconnected");

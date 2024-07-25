@@ -45,9 +45,7 @@ export const configureSocket = (io: Server) => {
         socket.data.image = user?.image;
         socket.data.role = user.role;
 
-
         userSocketMap[user.id] = socket.id;
-
 
         socket.emit("registered", `User ${user.id} successfully registered`);
       } catch (error) {
@@ -57,11 +55,8 @@ export const configureSocket = (io: Server) => {
     });
 
     socket.on("privateMessage", ({ sender, receiver, message }) => {
-
       const receiverSocketId = userSocketMap[receiver];
       if (receiverSocketId) {
-
-
         const dataSend = {
           sender,
           message,
@@ -70,12 +65,7 @@ export const configureSocket = (io: Server) => {
             userName: socket.data.userName,
             email: socket.data.email,
           },
-        }
-
-        console.log('Mensaje recibido en socket')
-        console.log(message)
-
-
+        };
         io.to(receiverSocketId).emit("privateMessage", dataSend);
       } else {
         console.log(`User ${receiver} is not connected`);
@@ -87,7 +77,17 @@ export const configureSocket = (io: Server) => {
     });
 
     socket.on("groupMessage", ({ group, sender, message }) => {
-      io.to(group).emit("groupMessage", { sender, message });
+      const dataSend = {
+        sender,
+        message,
+        date: new Date().toISOString(),
+        senderData: {
+          userName: socket.data.userName,
+          email: socket.data.email,
+        },
+      };
+
+      io.to(group).emit("groupMessage", dataSend);
     });
 
     socket.on("disconnect", () => {
@@ -102,4 +102,3 @@ export const configureSocket = (io: Server) => {
     });
   });
 };
-
