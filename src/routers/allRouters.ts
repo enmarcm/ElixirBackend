@@ -1,5 +1,6 @@
 import authRouter from "./authRouter";
 import contactRouter from "./contactRouter";
+import groupRouter from "./groupRouter";
 import mainRouter from "./mainRouter";
 import messagesRouter from "./messagesRouters";
 import profileRouter from "./profileRouter";
@@ -11,5 +12,6 @@ export default {
   profileRouter,
   messagesRouter,
   contactRouter,
-  statusRouter
+  statusRouter,
+  groupRouter,
 };

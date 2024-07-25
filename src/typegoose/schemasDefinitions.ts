@@ -166,8 +166,8 @@ export class GroupMessage {
 
   @prop({ required: false, type: Array<User> })
   public seen!: Array<User>;
-}
 
+}
 @modelOptions({
   schemaOptions: {
     toJSON: {

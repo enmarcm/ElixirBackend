@@ -10,6 +10,7 @@ var Routes;
     Routes["MESSAGES"] = "/messages";
     Routes["CONTACTS"] = "/contacts";
     Routes["STATUS"] = "/status";
+    Routes["GROUPS"] = "/groups";
 })(Routes || (exports.Routes = Routes = {}));
 exports.URLS = {
     MAIN: constants_1.BASE_URL,

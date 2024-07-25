@@ -35,6 +35,7 @@ app.use(Routes.PROFILE, midToken, R.profileRouter);
 app.use(Routes.MESSAGES, midToken, R.messagesRouter);
 app.use(Routes.CONTACTS, midToken, R.contactRouter);
 app.use(Routes.STATUS, midToken, R.statusRouter);
+app.use(Routes.GROUPS, midToken, R.groupRouter);
 
 app.use(midErrorHandler);
 app.use(midNotFound);
