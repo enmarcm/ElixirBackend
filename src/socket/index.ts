@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { IJWTManager } from "../data/instances";
 import UserModelClass from "../models/UserModelClass";
 import { GenerateTokenData } from "../types";
+import crypto from "node:crypto";
 
 interface UserSocketMap {
   [userId: string]: string;

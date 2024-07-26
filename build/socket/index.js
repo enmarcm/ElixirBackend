@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.configureSocket = void 0;
 const instances_1 = require("../data/instances");
 const UserModelClass_1 = __importDefault(require("../models/UserModelClass"));
+const node_crypto_1 = __importDefault(require("node:crypto"));
 const userSocketMap = {};
 const configureSocket = (io) => {
     // console.log("cree el socket");
@@ -76,7 +77,7 @@ const configureSocket = (io) => {
         socket.on("groupMessage", ({ group, sender, message }) => {
             console.log(`User ${sender} sent message to group ${group}`);
             const dataSend = {
-                id: crypto.randomUUID(),
+                id: node_crypto_1.default.randomUUID(),
                 sender,
                 message,
                 date: new Date().toISOString(),
