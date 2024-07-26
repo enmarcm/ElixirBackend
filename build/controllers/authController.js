@@ -32,6 +32,7 @@ class AuthController {
                 throw new Error(`${field} is not valid!`);
             }
         }
+        return;
     }
     static verifyUser(_a) {
         return __awaiter(this, arguments, void 0, function* ({ req }) {
@@ -41,6 +42,7 @@ class AuthController {
             if (data) {
                 throw new Error("User or email already exist");
             }
+            return;
         });
     }
     static registerUser(_a) {
@@ -143,11 +145,13 @@ class AuthController {
                 const data = (yield AuthController.registerUser({
                     req,
                 }));
-                ``;
+                console.log('Mi data es');
+                console.log(data);
                 const isMailSent = yield AuthController.sendVerificationMail({
                     userData: data === null || data === void 0 ? void 0 : data.data,
                     code: data === null || data === void 0 ? void 0 : data.code,
                 });
+                console.log(isMailSent);
                 if (!isMailSent)
                     throw new Error("Error sending verification mail");
                 return res.status(201).json({
@@ -156,7 +160,7 @@ class AuthController {
             }
             catch (error) {
                 console.error(`Error registering user: ${error}`);
-                return res.status(500).json({ error: error.message });
+                return res.status(400).json({ error: error.message });
             }
         });
     }
@@ -307,6 +311,7 @@ class AuthController {
                     id,
                     userName,
                     email: userData.email,
+                    image: userData.image,
                 });
                 const response = {
                     message: "User logged in successfully",

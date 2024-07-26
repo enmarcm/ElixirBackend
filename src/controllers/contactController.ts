@@ -59,5 +59,19 @@ export default class ContactController {
       console.error(`Hubo un error al eliminar el contacto: ${error}`);
       throw new Error(`Error deleting contact: ${error}`);
     }
-  }
+  };
+
+  static getSimpleContacts = async (req: Request, res: Response) => {
+    try {
+      const { idUser } = req as any;
+      const result = await ContactModelClass.getSimpleContacts({
+        idUser,
+      });
+
+      return res.json(result);
+    } catch (error) {
+      console.error(`Hubo un error al obtener los contactos: ${error}`);
+      throw new Error(`Error getting contacts: ${error}`);
+    }
+  };
 }

@@ -36,6 +36,7 @@ function midToken(req, res, next) {
             req.username = user.userName;
             req.email = user.email;
             req.role = user.role;
+            req.image = user === null || user === void 0 ? void 0 : user.image;
             return next();
         }
         catch (error) {

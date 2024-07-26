@@ -11,8 +11,8 @@ class JWTManager {
     }
     generateToken(props) {
         try {
-            const { id, userName, email } = props;
-            const token = jsonwebtoken_1.default.sign({ id, userName, email }, this.SECRET_WORD, {
+            const { id, userName, email, image } = props;
+            const token = jsonwebtoken_1.default.sign({ id, userName, email, image }, this.SECRET_WORD, {
                 expiresIn: this.expiresIn,
             });
             const tokenFormated = `Bearer ${token}`;

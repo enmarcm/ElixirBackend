@@ -43,7 +43,7 @@ export class User {
     default:
       "https://st2.depositphotos.com/47577860/46269/v/450/depositphotos_462698004-stock-illustration-account-avatar-interface-icon-flat.jpg",
   })
-  public image!: string;
+  public image?: string;
 
   @prop({
     required: false,
@@ -133,7 +133,7 @@ export class Group {
   @prop({ required: true, type: String, ref: () => User })
   public idUserOwner!: Ref<User>;
 
-  @prop({ required: true, type: [String], ref: () => User })
+  @prop({ required: true, type: Array<User>, ref: () => User })
   public idUsers!: Ref<User>[];
 
   @prop({ required: false, type: String })
@@ -158,15 +158,14 @@ export class GroupMessage {
   @prop({ required: true, type: String, ref: () => User })
   public idUser!: Ref<User>;
 
-  @prop({ required: true, type: String })
-  public content!: MessageInterface;
+  @prop({ required: true, type: Object })
+  public message!: MessageInterface;
 
   @prop({ required: false, type: Date })
   public date!: Date;
 
   @prop({ required: false, type: Array<User> })
   public seen!: Array<User>;
-
 }
 @modelOptions({
   schemaOptions: {

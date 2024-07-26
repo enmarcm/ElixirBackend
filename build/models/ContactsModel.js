@@ -14,7 +14,7 @@ const instances_1 = require("../data/instances");
 const models_1 = require("../typegoose/models");
 class ContactModelClass {
     static deleteContact(_b) {
-        return __awaiter(this, arguments, void 0, function* ({ idContact, }) {
+        return __awaiter(this, arguments, void 0, function* ({ idContact }) {
             try {
                 const result = yield instances_1.ITSGooseHandler.removeDocument({
                     Model: models_1.ContactModel,
@@ -25,6 +25,28 @@ class ContactModelClass {
             catch (error) {
                 console.error(`Hubo un error al eliminar el contacto: ${error}`);
                 throw new Error(`Error deleting contact: ${error}`);
+            }
+        });
+    }
+    static getSimpleContacts(_b) {
+        return __awaiter(this, arguments, void 0, function* ({ idUser }) {
+            try {
+                const result = yield instances_1.ITSGooseHandler.searchAll({
+                    Model: models_1.ContactModel,
+                    condition: { idUserOwner: idUser },
+                    transform: { idUserContact: 1, name: 1 },
+                });
+                const mappedContacts = yield Promise.all(result.map((contact) => {
+                    return {
+                        id: contact.idUserContact,
+                        text: contact.name,
+                    };
+                }));
+                return mappedContacts;
+            }
+            catch (error) {
+                console.error(`Hubo un error al obtener los contactos: ${error}`);
+                throw new Error(`Error getting contacts: ${error}`);
             }
         });
     }

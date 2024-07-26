@@ -10,6 +10,7 @@ interface Request extends ExpressRequest {
   email?: string;
   role?: string;
   idArtist?: string;
+  image?: string;
 }
 
 export default async function midToken(
@@ -44,6 +45,7 @@ export default async function midToken(
     req.username = user.userName;
     req.email = user.email;
     req.role = user.role;
+    req.image = user?.image;
 
     return next();
   } catch (error) {

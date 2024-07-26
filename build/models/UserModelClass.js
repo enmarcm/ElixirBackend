@@ -213,9 +213,14 @@ class UserModelClass {
         });
     }
     static generateToken(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ id, userName, email, }) {
+        return __awaiter(this, arguments, void 0, function* ({ id, userName, email, image, }) {
             try {
-                const dataToken = instances_1.IJWTManager.generateToken({ id, email, userName });
+                const dataToken = instances_1.IJWTManager.generateToken({
+                    id,
+                    email,
+                    userName,
+                    image,
+                });
                 return dataToken;
             }
             catch (error) {
@@ -261,7 +266,14 @@ class UserModelClass {
                 const user = yield instances_1.ITSGooseHandler.searchOne({
                     Model: models_1.UserModel,
                     condition: { $or: [{ userName: userOrEmail }, { email: userOrEmail }] },
-                    transform: { password: 0, dateOfBirth: 0, attempts: 0, active: 0, blocked: 0, idArtist: 0, },
+                    transform: {
+                        password: 0,
+                        dateOfBirth: 0,
+                        attempts: 0,
+                        active: 0,
+                        blocked: 0,
+                        idArtist: 0,
+                    },
                 });
                 return user;
             }

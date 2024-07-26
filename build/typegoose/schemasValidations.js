@@ -5,7 +5,7 @@ class UserValidations {
 }
 exports.UserValidations = UserValidations;
 UserValidations.userNameValidate = () => ({
-    validator: (v) => /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ]{6,10}$/.test(v),
+    validator: (v) => /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ]{4,16}$/.test(v),
     message: "Username must be 6-10 characters long and contain only letters and numbers, including accents and Ñ.",
 });
 UserValidations.emailValidate = () => ({

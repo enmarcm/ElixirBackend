@@ -26,38 +26,56 @@ groupRouter.get("/getAllGroupsUser", (req, res) => __awaiter(void 0, void 0, voi
         throw new Error(error);
     }
 }));
-groupRouter.get("/obtainGroupMessages/:id", (req, res) => {
+groupRouter.get("/obtainGroupMessages/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const result = GroupsModelClass_1.default.getGroupById(id);
+        console.log(id);
+        const result = yield GroupsModelClass_1.default.obtainGroupMessages(id);
         return res.json(result);
     }
     catch (error) {
         console.error(error);
         throw new Error(error);
     }
-});
-groupRouter.get("/getGroupById/:id", (req, res) => {
+}));
+groupRouter.get("/getGroupById/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const result = GroupsModelClass_1.default.getGroupById(id);
+        const result = yield GroupsModelClass_1.default.getGroupById(id);
         return res.json(result);
     }
     catch (error) {
         console.error(error);
         throw new Error(error);
     }
-});
-groupRouter.post("/createGroup", (req, res) => {
+}));
+groupRouter.post("/createGroup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { idUser } = req;
-        const { name, description, image, users } = req.body;
-        const result = GroupsModelClass_1.default.createGroup({
+        const { name, description, image, idUsers } = req.body;
+        const result = yield GroupsModelClass_1.default.createGroup({
             name,
             description,
             image,
             idUserOwner: idUser,
-            idUsers: users,
+            idUsers,
+        });
+        const resultParsed = JSON.parse(JSON.stringify(result));
+        return res.json(resultParsed);
+    }
+    catch (error) {
+        console.error(error);
+        throw new Error(error);
+    }
+}));
+groupRouter.post("/addMessageToGroup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idUser } = req;
+        const { idGroup, message } = req.body;
+        const result = yield GroupsModelClass_1.default.addMessageToGroup({
+            idGroup,
+            idUser,
+            message,
         });
         return res.json(result);
     }
@@ -65,16 +83,17 @@ groupRouter.post("/createGroup", (req, res) => {
         console.error(error);
         throw new Error(error);
     }
-});
-groupRouter.delete("/deleteGroup/:id", (req, res) => {
+}));
+groupRouter.delete("/deleteGroup/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { idUser } = req;
         const { id } = req.params;
-        const result = GroupsModelClass_1.default.deleteGroup(id);
+        const result = yield GroupsModelClass_1.default.deleteGroup(id, idUser);
         return res.json(result);
     }
     catch (error) {
         console.error(error);
         throw new Error(error);
     }
-});
+}));
 exports.default = groupRouter;

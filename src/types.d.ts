@@ -156,6 +156,7 @@ export interface UserInterface {
   active: boolean;
   dateOfBirth: Date;
   role?: string;
+  image?: string;
 }
 
 type ErrorHandler = (res: Response, message?: string) => void;
@@ -169,11 +170,12 @@ export interface GenerateTokenData {
   id: string;
   userName: string;
   email: string;
+  image?: string;
 }
 
 export interface MessageInterface {
   type: MessageType;
-  message: string;
+  content: string;
 }
 
 export type MessageType = "text" | "image" | "audio";

@@ -69,4 +69,17 @@ ContactController.deleteContact = (req, res) => __awaiter(void 0, void 0, void 0
         throw new Error(`Error deleting contact: ${error}`);
     }
 });
+ContactController.getSimpleContacts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { idUser } = req;
+        const result = yield ContactsModel_1.default.getSimpleContacts({
+            idUser,
+        });
+        return res.json(result);
+    }
+    catch (error) {
+        console.error(`Hubo un error al obtener los contactos: ${error}`);
+        throw new Error(`Error getting contacts: ${error}`);
+    }
+});
 exports.default = ContactController;

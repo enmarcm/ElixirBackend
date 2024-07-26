@@ -13,6 +13,7 @@ class AuthController {
     const body = req.body as RegisterUser;
     const { userName, email, password, dateOfBirth } = body;
 
+
     if (!userName || !email || !password || !dateOfBirth) {
       throw new Error("Missing required fields");
     }
@@ -25,7 +26,9 @@ class AuthController {
         throw new Error(`${field} is not valid!`);
       }
     }
-  }
+
+    return 
+}
 
   private static async verifyUser({ req }: { req: Request }): Promise<void> {
     const body = req.body as RegisterUser;
@@ -36,6 +39,8 @@ class AuthController {
     if (data) {
       throw new Error("User or email already exist");
     }
+
+    return
   }
 
   private static async registerUser({
@@ -152,17 +157,26 @@ class AuthController {
 
   public static async register(req: Request, res: Response) {
     try {
+      
       AuthController.verifyData({ req });
+      
       await AuthController.verifyUser({ req });
 
       const data = (await AuthController.registerUser({
         req,
       })) as RegisteredUser;
-      ``;
+      
+
+      console.log('Mi data es')
+      console.log(data)
+
       const isMailSent = await AuthController.sendVerificationMail({
         userData: data?.data,
         code: data?.code,
       });
+
+      console.log(isMailSent)
+
       if (!isMailSent) throw new Error("Error sending verification mail");
 
       return res.status(201).json({
@@ -170,7 +184,7 @@ class AuthController {
       });
     } catch (error) {
       console.error(`Error registering user: ${error}`);
-      return res.status(500).json({ error: (error as Error).message });
+      return res.status(400).json({ error: (error as Error).message });
     }
   }
 
@@ -335,6 +349,7 @@ class AuthController {
         id,
         userName,
         email: userData.email,
+        image: userData.image,
       });
 
       const response = {

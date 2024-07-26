@@ -94,11 +94,7 @@ export default class ContactModelClass {
     }
   };
 
-  static async deleteContact({
-    idContact,
-  }: {
-    idContact: string;
-  }) {
+  static async deleteContact({ idContact }: { idContact: string }) {
     try {
       const result = await ITSGooseHandler.removeDocument({
         Model: ContactModel,
@@ -109,6 +105,30 @@ export default class ContactModelClass {
     } catch (error) {
       console.error(`Hubo un error al eliminar el contacto: ${error}`);
       throw new Error(`Error deleting contact: ${error}`);
+    }
+  }
+
+  static async getSimpleContacts({ idUser }: { idUser: string }) {
+    try {
+      const result = await ITSGooseHandler.searchAll({
+        Model: ContactModel,
+        condition: { idUserOwner: idUser },
+        transform: { idUserContact: 1, name: 1 },
+      });
+
+      const mappedContacts = await Promise.all(
+        result.map((contact: any) => {
+          return {
+            id: contact.idUserContact,
+            text: contact.name,
+          };
+        })
+      );
+
+      return mappedContacts;
+    } catch (error) {
+      console.error(`Hubo un error al obtener los contactos: ${error}`);
+      throw new Error(`Error getting contacts: ${error}`);
     }
   }
 }

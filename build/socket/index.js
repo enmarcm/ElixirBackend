@@ -70,16 +70,20 @@ const configureSocket = (io) => {
             }
         });
         socket.on("joinGroup", (group) => {
+            console.log(`User ${socket.data.idUser} joined group ${group}`);
             socket.join(group);
         });
         socket.on("groupMessage", ({ group, sender, message }) => {
+            console.log(`User ${sender} sent message to group ${group}`);
             const dataSend = {
+                id: crypto.randomUUID(),
                 sender,
                 message,
                 date: new Date().toISOString(),
                 senderData: {
                     userName: socket.data.userName,
                     email: socket.data.email,
+                    image: socket.data.image,
                 },
             };
             io.to(group).emit("groupMessage", dataSend);

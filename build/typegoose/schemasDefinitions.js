@@ -140,7 +140,7 @@ __decorate([
     (0, typegoose_1.prop)({ required: true, type: String, ref: () => User })
 ], Group.prototype, "idUserOwner", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, type: [String], ref: () => User })
+    (0, typegoose_1.prop)({ required: true, type: (Array), ref: () => User })
 ], Group.prototype, "idUsers", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: false, type: String })
@@ -168,8 +168,8 @@ __decorate([
     (0, typegoose_1.prop)({ required: true, type: String, ref: () => User })
 ], GroupMessage.prototype, "idUser", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, type: String })
-], GroupMessage.prototype, "content", void 0);
+    (0, typegoose_1.prop)({ required: true, type: Object })
+], GroupMessage.prototype, "message", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: false, type: Date })
 ], GroupMessage.prototype, "date", void 0);
