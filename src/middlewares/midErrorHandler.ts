@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { ERROR_HANDLERS } from "../constants";
+import { NextFunction, Request, Response } from "express";
+import { isHttpError } from "../utils/errors";
 
 export default function midErrorHandler(
   err: Error,
@@ -7,18 +7,14 @@ export default function midErrorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  const isTokenError =
-    err.message.includes("TokenExpiredError") ||
-    err.message.includes("JsonWebTokenError");
+  const status = isHttpError(err) ? err.status : 500;
+  const message = isHttpError(err)
+    ? err.message
+    : "Unexpected server error";
+  const details = isHttpError(err) ? err.details : undefined;
 
-  const errorHandlerKey = isTokenError
-    ? err.message.includes("TokenExpiredError")
-      ? "TokenExpiredError"
-      : "JsonWebTokenError"
-    : err.name;
-
-  const handler =
-    ERROR_HANDLERS[errorHandlerKey] || ERROR_HANDLERS.defaultError;
-
-  handler(res, isTokenError ? err.message : undefined);
+  res.status(status).json({
+    error: message,
+    ...(details ? { details } : {}),
+  });
 }

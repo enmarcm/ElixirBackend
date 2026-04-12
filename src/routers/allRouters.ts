@@ -1,17 +1,17 @@
-import authRouter from "./authRouter";
-import contactRouter from "./contactRouter";
-import groupRouter from "./groupRouter";
+import clientsRouter from "./clientsRouter";
+import dashboardRouter from "./dashboardRouter";
+import deliveryMethodsRouter from "./deliveryMethodsRouter";
 import mainRouter from "./mainRouter";
-import messagesRouter from "./messagesRouters";
-import profileRouter from "./profileRouter";
-import statusRouter from "./statusRouter";
+import paymentMethodsRouter from "./paymentMethodsRouter";
+import productsRouter from "./productsRouter";
+import salesRouter from "./salesRouter";
 
 export default {
-  authRouter,
   mainRouter,
-  profileRouter,
-  messagesRouter,
-  contactRouter,
-  statusRouter,
-  groupRouter,
+  productsRouter,
+  salesRouter,
+  clientsRouter,
+  paymentMethodsRouter,
+  deliveryMethodsRouter,
+  dashboardRouter,
 };

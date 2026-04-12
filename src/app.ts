@@ -1,45 +1,25 @@
 import express from "express";
-import { CONFIG_SERVER_SOCKET, PORT } from "./constants";
-import { startServer } from "./functions";
-import {
-  midConnectDB,
-  midCors,
-  midJson,
-  midNotFound,
-  midNotJson,
-  midValidJson,
-  midErrorHandler,
-  midToken,
-} from "./middlewares/middlewares";
-import R from "./routers/allRouters";
+import { PORT, UPLOADS_DIR } from "./constants";
 import { Routes } from "./enums";
-import http from "node:http";
-import { Server } from "socket.io";
-import { configureSocket } from "./socket";
+import { startServer } from "./functions";
+import { midCors, midErrorHandler, midJson, midNotFound } from "./middlewares";
+import R from "./routers/allRouters";
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, CONFIG_SERVER_SOCKET);
 
-//{ Middlewares
 app.use(midJson());
-app.use(midValidJson);
 app.use(midCors());
-app.use(midNotJson);
-app.use(midConnectDB);
+app.use("/uploads", express.static(UPLOADS_DIR));
 
-//!TODO: Colocar de nuevo los tokens
-//{ Routes
-app.use(Routes.AUTH, R.authRouter);
-app.use(Routes.PROFILE, midToken, R.profileRouter);
-app.use(Routes.MESSAGES, midToken, R.messagesRouter);
-app.use(Routes.CONTACTS, midToken, R.contactRouter);
-app.use(Routes.STATUS, midToken, R.statusRouter);
-app.use(Routes.GROUPS, midToken, R.groupRouter);
+app.use(Routes.MAIN, R.mainRouter);
+app.use(Routes.PRODUCTS, R.productsRouter);
+app.use(Routes.SALES, R.salesRouter);
+app.use(Routes.CLIENTS, R.clientsRouter);
+app.use(Routes.PAYMENT_METHODS, R.paymentMethodsRouter);
+app.use(Routes.DELIVERY_METHODS, R.deliveryMethodsRouter);
+app.use(Routes.DASHBOARD, R.dashboardRouter);
 
 app.use(midErrorHandler);
 app.use(midNotFound);
 
-configureSocket(io);
-
-startServer({ app: server, PORT });
+startServer({ app, PORT });

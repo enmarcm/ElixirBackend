@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
-const midNotFound = (_req: Request, res: Response, next: NextFunction) => {
+const midNotFound = (_req: Request, res: Response) => {
   res.status(404).json({ error: "Not Found" });
-  next();
 };
 
 export default midNotFound;
